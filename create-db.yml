@@ -22,22 +22,3 @@
   - name: Posting available data for review
     debug:
       msg: "{{ db_result }}"
-        #      login_host: localhost
-        #      login_user: postgres
-        #      login_password: dbuser
-        #      priv: "CONNECT/labsystems-v2:ALL"
-        #      role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
-        #      state: present  
-        #
-        #  - name: Postgresql Check DB
-        #    postgresql_ping: 
-        #      db: labsystems-v2
-        #      login_host: localhost
-        #      login_user: dbuser
-        #      login_password: dbuser
-        #    register: db_result
-        #
-        #  - name: Posting available data for review
-        #    debug:
-        #      msg: "{{ db_result }}"
-        #
