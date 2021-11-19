@@ -1,0 +1,48 @@
+---
+- hosts: db1.wrt.lab
+  remote_user: deployer
+  become: yes
+  vars:
+    db_user: dbuser
+    db_name: dbwrtlab
+    db_password: dbuser
+  tasks:
+  - name: Install dependencies for PostgreSQL
+    yum: 
+      name: ['bash', 'openssl'] 
+      update_cache: true 
+      state: latest
+      #- libssl-dev
+      #- libssl-doc
+  - name: Install PostgreSQL
+    yum: 
+      name: ['postgresql-server', 'postgresql', 'postgresql-contrib', 'python-psycopg2'] 
+      update_cache: true 
+      state: present
+      #- libpq-dev
+  - name: Ensure the PostgreSQL service is running
+    service: name=postgresql state=started enabled=yes
+  - name: Create the database specified in vars
+    become: true
+    become_user: postgres
+    postgresql_db: name={{ db_name }}
+         template='template0'
+         state=present
+  - name: Ensure user has access to the new database
+    become: true
+    become_user: postgres
+    postgresql_user: db={{ db_name }}
+         name={{ db_user }}
+         password={{ db_password }}
+         priv=ALL
+         state=present
+  - name: Ensure user does not have unnecessary permissions
+    become: true
+    become_user: postgres
+    postgresql_user: name={{ db_user }}
+         role_attr_flags=NOSUPERUSER,NOCREATEDB
+         state=present
+  - name: Add some dummy data to our database
+    become: true
+    become_user: postgres
+    shell: psql {{ db_name }} < dump.sql

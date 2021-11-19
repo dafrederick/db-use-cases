@@ -1,0 +1,17 @@
+---
+- name: Check health of db server
+  hosts: db1.wrt.lab
+  remote_user: deployer
+  gather_facts: yes
+  tasks:
+  - name: Postgresql Check DB
+    postgresql_ping: 
+      db: dbwrtlab
+      login_host: localhost
+      login_user: dbuser
+      login_password: dbuser
+    register: db_result
+  - name: Posting available data for review
+    debug:
+      msg: "{{ db_result }}"
+

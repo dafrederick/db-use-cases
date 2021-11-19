@@ -1,0 +1,33 @@
+---
+- name: Add db for tracking lab systems
+  hosts: db1.wrt.lab
+  remote_user: deployer
+  gather_facts: yes
+  tasks:
+  - name: Creating DB for tracking lab systems
+    postgresql_db: 
+      name: "{{ db_name }}"
+      template: template0
+    register: db_result
+  - name: Posting available data for review
+    debug:
+      msg: "{{ db_result }}"
+
+  - name: Add user to labsystems db
+    postgresql_user:
+      db: "{{ db_name }}"
+      name: dbuser
+      priv: ALL
+      role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
+    register: db_result
+  - name: Posting available data for review
+    debug:
+      msg: "{{ db_result }}"
+
+  - name: Ensure db table for temp is present
+    postgresql_table:
+      db: "{{ db_name }}"
+      table: "{{ db_table }}"
+      columns:
+      - '{{ column1 }}' TEXT COLLATE "C" NOT NULL
+      - '{{ column2 }}' TEXT COLLATE "C" PRIMARY KEY

@@ -1,0 +1,43 @@
+---
+- name: Add db for tracking lab systems
+  hosts: db1.wrt.lab
+  remote_user: deployer
+  gather_facts: yes
+  tasks:
+  - name: Creating DB for tracking lab systems
+    postgresql_db: 
+      name: labsystems-v2
+      template: template0
+    register: db_result
+  - name: Posting available data for review
+    debug:
+      msg: "{{ db_result }}"
+
+  - name: Add user to labsystems db
+    postgresql_user:
+      db: labsystems-v2
+      name: dbuser
+      priv: ALL
+    register: db_result
+  - name: Posting available data for review
+    debug:
+      msg: "{{ db_result }}"
+        #      login_host: localhost
+        #      login_user: postgres
+        #      login_password: dbuser
+        #      priv: "CONNECT/labsystems-v2:ALL"
+        #      role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
+        #      state: present  
+        #
+        #  - name: Postgresql Check DB
+        #    postgresql_ping: 
+        #      db: labsystems-v2
+        #      login_host: localhost
+        #      login_user: dbuser
+        #      login_password: dbuser
+        #    register: db_result
+        #
+        #  - name: Posting available data for review
+        #    debug:
+        #      msg: "{{ db_result }}"
+        #
